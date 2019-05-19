@@ -20,13 +20,18 @@
 using namespace std;
 using namespace CsvStreamNS;
 
-CsvStream::CsvStream(const char* filename, ios_base::openmode mode = ios_base::in | ios_base::out)
+CsvStream::CsvStream(const char* filename, ios_base::openmode mode = ios_base::in | ios_base::out , std::ostream* errOutputStream)
 	: fstream(filename, mode)
 {
 	buf = new char[bufsize];
+
+	if (is_open() == false) {
+		if (errOutputStream != nullptr) *errOutputStream << "Failed to open file : filename" << endl;
+	}
+
 	if (buf == NULL) {
-		cout << "memory allocation failure" << endl;
-		exit(1);
+		if(errOutputStream != nullptr) *errOutputStream << "memory allocation failure" << endl;
+		close();
 	}
 }
 

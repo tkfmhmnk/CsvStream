@@ -30,7 +30,7 @@ namespace CsvStreamNS {
 	class CsvStream : public std::fstream {
 	public:
 		CsvStream() {}
-		CsvStream(const char* filename, std::ios_base::openmode mode);
+		CsvStream(const char* filename, std::ios_base::openmode mode, std::ostream* errOutputStream = nullptr);
 		~CsvStream();
 		Ret GetCell(char* des, std::streamsize n);
 		Ret GetCell(int* des);
