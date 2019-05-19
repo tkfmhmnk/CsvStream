@@ -25,11 +25,11 @@ enum CsvResultType{
     ERROR
 };
 
-class csvstream : public std::fstream{
+class CsvStream : public std::fstream{
 public:
-    csvstream(){}       
-    csvstream(const char* filename,std::ios_base::openmode mode);
-    ~csvstream();
+    CsvStream(){}       
+    CsvStream(const char* filename,std::ios_base::openmode mode);
+    ~CsvStream();
     CsvResultType getcell(char* des,std::streamsize n);
     CsvResultType getcell(int* des);
 private:

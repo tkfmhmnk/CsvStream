@@ -18,7 +18,7 @@
 #include<iostream>
 using namespace std;
 
-csvstream::csvstream(const char* filename, ios_base::openmode mode = ios_base::in | ios_base::out)
+CsvStream::CsvStream(const char* filename, ios_base::openmode mode = ios_base::in | ios_base::out)
 	: fstream(filename, mode)
 {
 	buf = new char[bufsize];
@@ -28,11 +28,11 @@ csvstream::csvstream(const char* filename, ios_base::openmode mode = ios_base::i
 	}
 }
 
-csvstream::~csvstream() {
+CsvStream::~CsvStream() {
 	delete[] buf;
 }
 //現在の位置のセルを文字列で読み込む
-CsvResultType csvstream::getcell(char* des, streamsize n) {
+CsvResultType CsvStream::getcell(char* des, streamsize n) {
 	char temp;
 	while ((n--) > 1) {
 		get(temp);
@@ -61,7 +61,7 @@ CsvResultType csvstream::getcell(char* des, streamsize n) {
 }
 
 //現在の位置のセルを整数で読み込む
-CsvResultType csvstream::getcell(int* des) {
+CsvResultType CsvStream::getcell(int* des) {
 	CsvResultType ret;
 	ret = getcell(buf, bufsize);
 	switch (ret) {
