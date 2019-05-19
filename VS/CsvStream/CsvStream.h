@@ -17,25 +17,29 @@
 
 #include<ios>
 #include<fstream>
-//#define CR_IS_EXIST
-enum CsvResultType{
-    NO_ERROR = 1,
-    END_OF_ROW,
-    END_OF_CSV,
-    ERROR
-};
 
-class CsvStream : public std::fstream{
-public:
-    CsvStream(){}       
-    CsvStream(const char* filename,std::ios_base::openmode mode);
-    ~CsvStream();
-    CsvResultType getcell(char* des,std::streamsize n);
-    CsvResultType getcell(int* des);
-private:
-    char* buf;
-    static const int bufsize=1000;
-};
+namespace CsvStreamNS {
+	//#define CR_IS_EXIST
+	enum class Ret : int {
+		NO_ERR = 1,
+		END_OF_ROW,
+		END_OF_CSV,
+		ERR
+	};
+
+	class CsvStream : public std::fstream {
+	public:
+		CsvStream() {}
+		CsvStream(const char* filename, std::ios_base::openmode mode);
+		~CsvStream();
+		Ret GetCell(char* des, std::streamsize n);
+		Ret GetCell(int* des);
+	private:
+		char* buf;
+		static const int bufsize = 1000;
+	};
+
+}
 
 
 #endif /* CSVSTREAM_H */
