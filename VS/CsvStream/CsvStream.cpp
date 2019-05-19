@@ -34,7 +34,7 @@ CsvStream::CsvStream(const char* filename, ios_base::openmode mode, bool existCR
 	}
 
 	if (buf == NULL) {
-		if(errOutputStream != nullptr) *errOutputStream << "memory allocation failure" << endl;
+		if(errOutputStream != nullptr) *errOutputStream << "Failed to allocate memory" << endl;
 		close();
 	}
 }
@@ -48,14 +48,19 @@ Ret CsvStream::GetCell(char* des, streamsize n) {
 	char temp;
 	while ((n--) > 1) {
 		get(temp);
-		if (rdstate() != goodbit) {
+		if (eof()) {
 			*des = '\0';
-			clear();
+			//clear();					//ライブラリを呼び出す側でclearする
 			return Ret::END_OF_CSV;
+		}
+		else if (rdstate() != goodbit) {
+			*des = '\0';
+			//clear();					//ライブラリを呼び出す側でclearする
+			return Ret::ERR;
 		}
 		else if (temp == ',') {
 			*des = '\0';
-			return Ret::NO_ERR;
+			return Ret::OK;
 		}
 		else if (temp == '\n') {
 			if (CR) {
@@ -78,7 +83,7 @@ Ret CsvStream::GetCell(int* des) {
 	Ret ret;
 	ret = GetCell(buf, bufsize);
 	switch (ret) {
-	case Ret::NO_ERR:
+	case Ret::OK:
 	case Ret::END_OF_ROW:
 	case Ret::END_OF_CSV:
 		*des = atoi(buf);

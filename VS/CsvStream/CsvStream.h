@@ -21,10 +21,10 @@
 namespace CsvStreamNS {
 	//#define CR_IS_EXIST
 	enum class Ret : int {
-		NO_ERR = 1,
+		OK = 1,
 		END_OF_ROW,
 		END_OF_CSV,
-		ERR
+		ERR,
 	};
 
 	class CsvStream : public std::fstream {
