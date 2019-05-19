@@ -47,16 +47,15 @@ CsvStream::~CsvStream() {
 //現在の位置のセルを文字列で読み込む
 Ret CsvStream::readCell(char* des, streamsize n) {
 	char temp;
+	if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
 	while ((n--) > 1) {
 		get(temp);
 		if (eof()) {
 			*des = '\0';
-			//clear();					//ライブラリを呼び出す側でclearする
 			return Ret::END_OF_CSV;
 		}
 		else if (rdstate() != goodbit) {
 			*des = '\0';
-			//clear();					//ライブラリを呼び出す側でclearする
 			return Ret::ERR;
 		}
 		else if (temp == ',') {
@@ -76,6 +75,33 @@ Ret CsvStream::readCell(char* des, streamsize n) {
 	}
 	*des = '\0';
 	if (errOutputStream != nullptr) *errOutputStream << "The buffer is too small." << endl;
+	return Ret::ERR;
+}
+
+//現在の位置のセルを文字列で読み込む
+Ret CsvStream::readCell(std::string& des){
+	char temp;
+	des.clear();
+	if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
+	while (1) {
+		get(temp);
+		if (eof()) {
+			return Ret::END_OF_CSV;
+		}
+		else if (rdstate() != goodbit) {
+			return Ret::ERR;
+		}
+		else if (temp == ',') {
+			return Ret::OK;
+		}
+		else if (temp == '\n') {
+			if (des.back() == '\r') {
+				des.pop_back();
+			}
+			return Ret::END_OF_ROW;
+		}
+		des.push_back(temp);
+	}
 	return Ret::ERR;
 }
 
@@ -140,10 +166,14 @@ Ret CsvStream::seekToPrevCell() {
 	do {
 		if (rdstate() != goodbit) return Ret::ERR;
 
-		if (tellg() == 0) return Ret::BEGIN_OF_CSV;
+		if (tellg() == 0) return Ret::ERR;
 		seekg(-1, ios_base::cur);
 		temp = peek();
-	} while (temp == ',');
+		if (temp == '\n') {
+			get(temp);
+			return Ret::ERR;
+		}
+	} while (temp != ',');
 
 	do {
 		if (rdstate() != goodbit) return Ret::ERR;
@@ -155,7 +185,7 @@ Ret CsvStream::seekToPrevCell() {
 			get(temp);
 			return Ret::BEGIN_OF_ROW;
 		}
-	} while (temp == ',');
+	} while (temp != ',');
 
 	get(temp);
 	return Ret::OK;
@@ -166,10 +196,10 @@ Ret CsvStream::seekToPrevCol() {
 	do {
 		if (rdstate() != goodbit) return Ret::ERR;
 
-		if (tellg() == 0) return Ret::BEGIN_OF_CSV;
+		if (tellg() == 0) return Ret::ERR;
 		seekg(-1, ios_base::cur);
 		temp = peek();
-	} while (temp == '\n');
+	} while (temp != '\n');
 
 	do {
 		if (rdstate() != goodbit) return Ret::ERR;
@@ -177,7 +207,25 @@ Ret CsvStream::seekToPrevCol() {
 		if (tellg() == 0) return Ret::BEGIN_OF_CSV;
 		seekg(-1, ios_base::cur);
 		temp = peek();
-	} while (temp == '\n');
+	} while (temp != '\n');
+
+	get(temp);
+	return Ret::OK;
+}
+
+Ret CsvStream::seekToCurrCol() {
+	char temp;
+	do {
+		if (rdstate() != goodbit) return Ret::ERR;
+
+		if (tellg() == 0) return Ret::BEGIN_OF_CSV;
+		seekg(-1, ios_base::cur);
+		temp = peek();
+		if (temp == '\n') {
+			get(temp);
+			return Ret::BEGIN_OF_ROW;
+		}
+	} while (temp != ',');
 
 	get(temp);
 	return Ret::OK;
