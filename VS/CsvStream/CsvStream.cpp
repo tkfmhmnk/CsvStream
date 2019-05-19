@@ -20,10 +20,12 @@
 using namespace std;
 using namespace CsvStreamNS;
 
-CsvStream::CsvStream(const char* filename, ios_base::openmode mode = ios_base::in | ios_base::out , std::ostream* errOutputStream)
+CsvStream::CsvStream(const char* filename, ios_base::openmode mode = ios_base::in | ios_base::out , bool existCR, std::ostream* errorOutputStream)
 	: fstream(filename, mode)
 {
 	buf = new char[bufsize];
+	errOutputStream = errorOutputStream;
+	CR = existCR;
 
 	if (is_open() == false) {
 		if (errOutputStream != nullptr) *errOutputStream << "Failed to open file : filename" << endl;
@@ -54,17 +56,18 @@ Ret CsvStream::GetCell(char* des, streamsize n) {
 			return Ret::NO_ERR;
 		}
 		else if (temp == '\n') {
-#ifdef CR_IS_EXIST
-			*(des - 1) = '\0';
-#else
-			*des = '\0';
-#endif
+			if (CR) {
+				*(des - 1) = '\0';
+			}
+			else {
+				*des = '\0';
+			}
 			return Ret::END_OF_ROW;
 		}
 		*(des++) = temp;
 	}
 	*des = '\0';
-	cout << "The buffer is too small." << endl;
+	if (errOutputStream != nullptr) *errOutputStream << "The buffer is too small." << endl;
 	return Ret::ERR;
 }
 
