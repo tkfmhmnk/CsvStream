@@ -23,7 +23,9 @@ namespace CsvStreamNS {
 	enum class Ret : int {
 		OK = 1,
 		END_OF_ROW,
+		BEGIN_OF_ROW,
 		END_OF_CSV,
+		BEGIN_OF_CSV,
 		ERR,
 	};
 
@@ -32,8 +34,12 @@ namespace CsvStreamNS {
 		CsvStream() {}
 		CsvStream(const char* filename, std::ios_base::openmode mode = ios_base::in | ios_base::out , bool existCR = true, std::ostream* errorOutputStream = nullptr);
 		~CsvStream();
-		Ret GetCell(char* des, std::streamsize n);
-		Ret GetCell(int* des);
+		Ret readCell(char* des, std::streamsize n);
+		Ret readCell(int* des);
+		Ret seekToNextCell();
+		Ret seekToNextCol();
+		Ret seekToPrevCell();
+		Ret seekToPrevCol();
 	private:
 		char* buf;
 		static const int bufsize;
