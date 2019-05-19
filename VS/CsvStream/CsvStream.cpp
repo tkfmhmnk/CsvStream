@@ -20,7 +20,9 @@
 using namespace std;
 using namespace CsvStreamNS;
 
-CsvStream::CsvStream(const char* filename, ios_base::openmode mode = ios_base::in | ios_base::out , bool existCR, std::ostream* errorOutputStream)
+const int CsvStream::bufsize = 1024;
+
+CsvStream::CsvStream(const char* filename, ios_base::openmode mode, bool existCR, std::ostream* errorOutputStream)
 	: fstream(filename, mode)
 {
 	buf = new char[bufsize];
