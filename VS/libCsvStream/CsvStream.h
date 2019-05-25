@@ -21,12 +21,12 @@
 
 namespace CsvStreamNS {
 	enum class Ret : int {
-		OK = 1,				//処理に成功した。
-		END_OF_ROW,			//処理に成功し、その結果、行の最後に達した
-		BEGIN_OF_ROW,		//処理に成功し、その結果、行の最初に達した
-		END_OF_CSV,			//処理に成功し、その結果、ファイルのEOFに達した
-		BEGIN_OF_CSV,		//処理に成功し、その結果、ファイルの先頭に達した
-		ERR,				//処理に失敗した
+		OK = 1,				//!<処理に成功した。
+		END_OF_ROW,			//!<処理に成功し、その結果、行の最後に達した
+		BEGIN_OF_ROW,		//!<処理に成功し、その結果、行の最初に達した
+		END_OF_CSV,			//!<処理に成功し、その結果、ファイルのEOFに達した
+		BEGIN_OF_CSV,		//!<処理に成功し、その結果、ファイルの先頭に達した
+		ERR,				//!<処理に失敗した
 	};
 
 	class CsvStream : public std::fstream {
