@@ -247,6 +247,7 @@ namespace CsvStreamNS {
 
 		/**
 		ファイルの現在の入力位置のセルの整数を読み取る
+		@todo 文字列に空白が含まれる場合を考慮する
 		*/
 		Ret readCell(int* des,int base = 10) {
 			if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
@@ -260,25 +261,30 @@ namespace CsvStreamNS {
 			case Ret::END_OF_CSV:
 				try {
 					*des = std::stoi(temp, &idx, base);
+					if (temp.length() != idx) {
+						if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::StringConversionError) << "\tstring : " << temp << "\tidx : " << idx << std::endl;
+						*des = 0;
+						ret == Ret::ERR;
+					}
 				}
 				catch (std::invalid_argument &e) {
 					if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::StringConversionError) << "\tstring : " << temp << "\tidx : " << idx << std::endl;
 					if (errOutputStream != nullptr) *errOutputStream << e.what() << std::endl;
 					*des = 0;
-					ret == Ret::ERR;
+					ret = Ret::ERR;
 				}
 				catch (std::out_of_range &e) {
 					if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::StringConversionError) << "\tstring : " << temp << "\tidx : " << idx << std::endl;
 					if (errOutputStream != nullptr) *errOutputStream << e.what() << std::endl;
 					*des = 0;
-					ret == Ret::ERR;
+					ret = Ret::ERR;
 				}
 				return ret;
 				break;
 			case Ret::ERR:
 			default:
 				*des = 0;
-				ret == Ret::ERR;
+				ret = Ret::ERR;
 				return ret;
 				break;
 			}
