@@ -278,6 +278,7 @@ namespace CsvStreamNS {
 			case Ret::ERR:
 			default:
 				*des = 0;
+				ret == Ret::ERR;
 				return ret;
 				break;
 			}
