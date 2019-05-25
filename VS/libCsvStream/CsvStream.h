@@ -80,7 +80,7 @@ namespace CsvStreamNS {
 		};
 
 		/**
-			複数の文字列型をまとめた構造体
+			複数の文字列型をまとめた構造体。_CSVSTREAM_MULTITYPE_STRと組み合わせて使うことを想定
 		*/
 		struct MultiTypeMessage {
 			const char* c;
@@ -92,56 +92,56 @@ namespace CsvStreamNS {
 		/**
 			エラーなどのメッセージ配列
 		*/
-		static constexpr MultiTypeMessage message[(int)Msg::Num] = {
+		static constexpr MultiTypeMessage messages[(int)Msg::Num] = {
 			_CSVSTREAM_MULTITYPE_STR("Failed to open file : filename"),
 			_CSVSTREAM_MULTITYPE_STR("Failed to allocate memory"),
 			_CSVSTREAM_MULTITYPE_STR("The buffer is too small.")
 		};
 
 		/**
-			messageからメッセージを取得する
+			messagesからメッセージを取得する
 			@param msg 取得したいメッセージ
 		*/
-		template<class CharTT> static const CharTT* getMessage(Msg msg) {
-			return message[(int)msg].c;
+		template<class CharTT> static const CharTT* GetMessage(Msg msg) {
+			return messages[(int)msg].c;
 		};
 
 		/**
-			char型で特殊化したgetMessage
+			char型で特殊化したGetMessage
 			@param msg 取得したいメッセージ
 		*/
-		template<> static const char* getMessage<char>(Msg msg) {
-			return message[(int)msg].c;
+		template<> static const char* GetMessage<char>(Msg msg) {
+			return messages[(int)msg].c;
 		};
 
 		/**
-			wchar_t型で特殊化したgetMessage
+			wchar_t型で特殊化したGetMessage
 			@param msg 取得したいメッセージ
 		*/
-		template<> static const wchar_t* getMessage<wchar_t>(Msg msg) {
-			return message[(int)msg].L;
+		template<> static const wchar_t* GetMessage<wchar_t>(Msg msg) {
+			return messages[(int)msg].L;
 		};
 		
 		/**
-			char16_t型で特殊化したgetMessage
+			char16_t型で特殊化したGetMessage
 			@param msg 取得したいメッセージ
 		*/
-		template<> static const char16_t* getMessage<char16_t>(Msg msg) {
-			return message[(int)msg].u;
+		template<> static const char16_t* GetMessage<char16_t>(Msg msg) {
+			return messages[(int)msg].u;
 		};
 
 		/**
-			char32_t型で特殊化したgetMessage
+			char32_t型で特殊化したGetMessage
 			@param msg 取得したいメッセージ
 		*/
-		template<> static const char32_t* getMessage<char32_t>(Msg msg) {
-			return message[(int)msg].U;
+		template<> static const char32_t* GetMessage<char32_t>(Msg msg) {
+			return messages[(int)msg].U;
 		};
 
 		static constexpr CharT comma = GetComma<CharT>();			//!<コンマ
 		static constexpr CharT nullChar = GetNullChar<CharT>();		//!<null文字
-		static constexpr CharT CR = GetCR<CharT>();					//!<キャリッジリターン
-		static constexpr CharT LF = GetLF<CharT>();					//!<ラインフィード
+		static constexpr CharT CR = GetCR<CharT>();					//!<Carriage Return
+		static constexpr CharT LF = GetLF<CharT>();					//!<Line Feed
 
 	public:
 		basic_CsvStream() {
@@ -151,7 +151,7 @@ namespace CsvStreamNS {
 			@param filename 開きたいファイルのパス
 			@param mode ファイルを開く時のモード
 			@param existCR CRの有無
-			@param errorOutputStream エラーなどのメッセージの出力先。不要ならnullptrで良い
+			@param errorOutputStream エラーなどのメッセージの出力先。メッセージ出力が不要ならnullptrで良い
 		*/
 		basic_CsvStream(
 			const CharT* filename,
@@ -164,11 +164,11 @@ namespace CsvStreamNS {
 			_CR = existCR;
 
 			if (std::basic_fstream<CharT>::is_open() == false) {
-				if (errOutputStream != nullptr) *errOutputStream << getMessage<CharT>(Msg::FileOpenError) << filename << std::endl;
+				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::FileOpenError) << filename << std::endl;
 			}
 
 			if (buf == NULL) {
-				if (errOutputStream != nullptr) *errOutputStream << getMessage<CharT>(Msg::MemoryAllocationError) << std::endl;
+				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::MemoryAllocationError) << std::endl;
 				std::basic_fstream<CharT>::close();
 			}
 		};
@@ -209,7 +209,7 @@ namespace CsvStreamNS {
 				*(des++) = temp;
 			}
 			*des = nullChar;
-			if (errOutputStream != nullptr) *errOutputStream << getMessage<CharT>(Msg::BufferSizeError) << std::endl;
+			if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::BufferSizeError) << std::endl;
 			return Ret::ERR;
 		};
 		
