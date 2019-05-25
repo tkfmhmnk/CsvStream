@@ -44,7 +44,6 @@ CsvStream::~CsvStream() {
 	delete[] buf;
 }
 
-//現在の位置のセルを文字列で読み込む
 Ret CsvStream::readCell(char* des, streamsize n) {
 	char temp;
 	if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
@@ -78,7 +77,6 @@ Ret CsvStream::readCell(char* des, streamsize n) {
 	return Ret::ERR;
 }
 
-//現在の位置のセルを文字列で読み込む
 Ret CsvStream::readCell(std::string& des){
 	char temp;
 	des.clear();
@@ -105,7 +103,6 @@ Ret CsvStream::readCell(std::string& des){
 	return Ret::ERR;
 }
 
-//現在の位置のセルを整数で読み込む
 Ret CsvStream::readCell(int* des) {
 	Ret ret;
 	ret = readCell(buf, bufsize);

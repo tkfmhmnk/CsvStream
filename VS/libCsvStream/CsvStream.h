@@ -39,48 +39,48 @@ namespace CsvStreamNS {
 			std::ostream* errorOutputStream = nullptr);
 		~CsvStream();
 		
-		///<summary>
-		///ファイルの現在の入力位置のセルの文字列を読み取る
-		///</summary>
+		/**
+		ファイルの現在の入力位置のセルの文字列を読み取る
+		*/
 		Ret readCell(char* des, std::streamsize n);
-
-		///<summary>
-		///ファイルの現在の入力位置のセルの文字列を読み取る
-		///</summary>
+		
+		/**
+		ファイルの現在の入力位置のセルの文字列を読み取る
+		*/
 		Ret readCell(std::string& des);
 
-		///<summary>
-		///ファイルの現在の入力位置のセルの整数を読み取る
-		///</summary>
+		/**
+		ファイルの現在の入力位置のセルの整数を読み取る
+		*/
 		Ret readCell(int* des);
 
-		///<summary>
-		///行中の次のセルの先頭の文字までファイルの入力位置をシークする
-		///</summary>
-		///<return>次のセルがない場合ERRを返す</return>
+		/**
+		行中の次のセルの先頭の文字までファイルの入力位置をシークする
+		@return 次のセルがない場合ERRを返す
+		*/
 		Ret seekToNextCell();
 
-		///<summary>
-		///次の行の先頭の文字までファイルの入力位置をシークする
-		///</summary>
-		///<return>次の行がない場合ERRを返す</return>
+		/**
+		次の行の先頭の文字までファイルの入力位置をシークする
+		@return 次の行がない場合ERRを返す
+		*/
 		Ret seekToNextCol();
 
-		///<summary>
-		///行中の前のセルの先頭の文字までファイルの入力位置をシークする
-		///</summary>
-		///<return>前のセルがない場合ERRを返す</return>
+		/**
+		行中の前のセルの先頭の文字までファイルの入力位置をシークする
+		@return 前のセルがない場合ERRを返す
+		*/
 		Ret seekToPrevCell();
 
-		///<summary>
-		///前の行の先頭の文字までファイルの入力位置をシークする
-		///</summary>
-		///<return>前の行がない場合ERRを返す</return>
+		/**
+		前の行の先頭の文字までファイルの入力位置をシークする
+		@return 前の行がない場合ERRを返す
+		*/
 		Ret seekToPrevCol();
 
-		///<summary>
-		///現在のセルの先頭の文字までファイルの入力位置をシークする
-		///</summary>
+		/**
+		現在のセルの先頭の文字までファイルの入力位置をシークする
+		*/
 		Ret seekToCurrCol();
 
 	private:
