@@ -249,6 +249,7 @@ namespace CsvStreamNS {
 		ファイルの現在の入力位置のセルの整数を読み取る
 		*/
 		Ret readCell(int* des,int base = 10) {
+			if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
 			Ret ret;
 			std::basic_string<CharT> temp;
 			int idx;
