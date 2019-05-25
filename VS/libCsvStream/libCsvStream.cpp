@@ -23,7 +23,11 @@ using namespace CsvStreamNS;
 
 const int CsvStream::bufsize = 1024;
 
-CsvStream::CsvStream(const char* filename, ios_base::openmode mode, bool existCR, std::ostream* errorOutputStream)
+CsvStream::CsvStream(
+	const char* filename,
+	std::ios_base::openmode mode,
+	bool existCR,
+	std::ostream* errorOutputStream)
 	: fstream(filename, mode)
 {
 	buf = new char[bufsize];
@@ -44,7 +48,7 @@ CsvStream::~CsvStream() {
 	delete[] buf;
 }
 
-Ret CsvStream::readCell(char* des, streamsize n) {
+Ret CsvStream::readCell(char* des, std::streamsize n) {
 	char temp;
 	if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
 	while ((n--) > 1) {
