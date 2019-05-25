@@ -252,7 +252,7 @@ namespace CsvStreamNS {
 			if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
 			Ret ret;
 			std::basic_string<CharT> temp;
-			int idx;
+			std::size_t idx;
 			ret = readCell(temp);
 			switch (ret) {
 			case Ret::OK:
