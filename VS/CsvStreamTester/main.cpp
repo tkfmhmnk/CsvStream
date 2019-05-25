@@ -10,7 +10,7 @@ const char* testdatas[] = {
 };
 
 bool test1() {
-	CsvStreamNS::CsvStream csv1(testdatas[0]);
+	CsvStreamNS::basic_CsvStream<char> csv1(testdatas[0]);
 	CsvStreamNS::Ret ret;
 
 	if (!csv1.is_open()) {
@@ -46,7 +46,7 @@ bool test1() {
 }
 
 bool test2() {
-	CsvStreamNS::CsvStream csv1(testdatas[0]);
+	CsvStreamNS::basic_CsvStream<char> csv1(testdatas[0]);
 	CsvStreamNS::Ret ret;
 
 	if (!csv1.is_open()) {
@@ -76,7 +76,7 @@ bool test2() {
 }
 
 bool test3() {
-	CsvStreamNS::CsvStream csv1(testdatas[0]);
+	CsvStreamNS::basic_CsvStream<char> csv1(testdatas[0]);
 	CsvStreamNS::Ret ret;
 
 	if (!csv1.is_open()) {
@@ -101,7 +101,7 @@ bool test3() {
 
 
 bool test4() {
-	CsvStreamNS::CsvStream csv1(testdatas[0]);
+	CsvStreamNS::basic_CsvStream<char> csv1(testdatas[0]);
 	CsvStreamNS::Ret ret;
 
 	if (!csv1.is_open()) {
@@ -131,7 +131,7 @@ bool test4() {
 }
 
 bool test5() {
-	CsvStreamNS::CsvStream csv1(testdatas[0]);
+	CsvStreamNS::basic_CsvStream<char> csv1(testdatas[0]);
 	CsvStreamNS::Ret ret;
 
 	if (!csv1.is_open()) {
@@ -155,7 +155,7 @@ bool test5() {
 }
 
 bool test6() {
-	CsvStreamNS::CsvStream csv1(testdatas[0]);
+	CsvStreamNS::basic_CsvStream<char> csv1(testdatas[0]);
 	CsvStreamNS::Ret ret;
 
 	if (!csv1.is_open()) {
@@ -202,7 +202,7 @@ bool test6() {
 }
 
 bool test7() {
-	CsvStreamNS::CsvStream csv1(testdatas[0]);
+	CsvStreamNS::basic_CsvStream<char> csv1(testdatas[0]);
 	CsvStreamNS::Ret ret;
 
 	if (!csv1.is_open()) {
@@ -259,6 +259,10 @@ bool test7() {
 
 }
 
+bool test8() {
+	CsvStreamNS::basic_CsvStream<wchar_t> csv1(L"..\\..\\TestData\\test61.csv", std::ios_base::in | std::ios_base::out, true, &std::wcout);
+	return false;
+}
 
 
 int main() {
@@ -274,5 +278,8 @@ int main() {
 	EXECUTE_TEST(test5());
 	EXECUTE_TEST(test6());
 	EXECUTE_TEST(test7());
+	EXECUTE_TEST(test8());
+
+
 	return 0;
 }
