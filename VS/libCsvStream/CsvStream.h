@@ -16,7 +16,6 @@
 #define CSVSTREAM_H
 
 #include<ios>
-#include<fstream>
 #include<string>
 
 namespace CsvStreamNS {
@@ -29,25 +28,25 @@ namespace CsvStreamNS {
 		ERR,				//!<処理に失敗した
 	};
 
-	class CsvStream : public std::fstream {
+	template<class CharT> class basic_CsvStream : public std::basic_fstream<CharT>{
 	public:
-		CsvStream() {}
-		CsvStream(
-			const char* filename,
+		basic_CsvStream();
+		basic_CsvStream(
+			const CharT* filename,
 			std::ios_base::openmode mode = ios_base::in | ios_base::out ,
 			bool existCR = true,
-			std::ostream* errorOutputStream = nullptr);
-		~CsvStream();
+			std::basic_ostream<CharT>* errorOutputStream = nullptr);
+		~basic_CsvStream();
 		
 		/**
 		ファイルの現在の入力位置のセルの文字列を読み取る
 		*/
-		Ret readCell(char* des, std::streamsize n);
+		Ret readCell(CharT* des, std::streamsize n);
 		
 		/**
 		ファイルの現在の入力位置のセルの文字列を読み取る
 		*/
-		Ret readCell(std::string& des);
+		Ret readCell(std::basic_string<CharT>& des);
 
 		/**
 		ファイルの現在の入力位置のセルの整数を読み取る
@@ -86,7 +85,7 @@ namespace CsvStreamNS {
 	private:
 		char* buf;
 		static const int bufsize;
-		std::ostream* errOutputStream;
+		std::basic_ostream<CharT>* errOutputStream;
 		bool CR;
 	};
 
