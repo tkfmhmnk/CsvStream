@@ -19,6 +19,7 @@
 #include<fstream>
 #include<string>
 #include<limits>
+#include<stdexcept>
 
 
 /**
@@ -76,6 +77,7 @@ namespace CsvStreamNS {
 			FileOpenError = 0,			//!<ファイルオープンエラー
 			MemoryAllocationError,		//!<メモリ確保などのエラー
 			BufferSizeError,			//!<バッファのサイズが足りない
+			StringConversionError,		//!<文字列の変換に失敗
 			Num							//!<メッセージの数を取得するための列挙定数
 		};
 
@@ -93,9 +95,10 @@ namespace CsvStreamNS {
 			エラーなどのメッセージ配列
 		*/
 		static constexpr MultiTypeMessage messages[(int)Msg::Num] = {
-			_CSVSTREAM_MULTITYPE_STR("Failed to open file : filename"),
-			_CSVSTREAM_MULTITYPE_STR("Failed to allocate memory"),
-			_CSVSTREAM_MULTITYPE_STR("The buffer is too small.")
+			_CSVSTREAM_MULTITYPE_STR("Failed to open file."),
+			_CSVSTREAM_MULTITYPE_STR("Failed to allocate memory."),
+			_CSVSTREAM_MULTITYPE_STR("The buffer is too small."),
+			_CSVSTREAM_MULTITYPE_STR("Failed to convert string."),
 		};
 
 		/**
@@ -164,7 +167,7 @@ namespace CsvStreamNS {
 			_CR = existCR;
 
 			if (std::basic_fstream<CharT>::is_open() == false) {
-				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::FileOpenError) << filename << std::endl;
+				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::FileOpenError) << ": filename "<< filename << std::endl;
 			}
 
 			if (buf == NULL) {
@@ -245,14 +248,30 @@ namespace CsvStreamNS {
 		/**
 		ファイルの現在の入力位置のセルの整数を読み取る
 		*/
-		Ret readCell(int* des) {
+		Ret readCell(int* des,int base = 10) {
 			Ret ret;
-			ret = readCell(buf, bufsize);
+			std::basic_string<CharT> temp;
+			int idx;
+			ret = readCell(temp);
 			switch (ret) {
 			case Ret::OK:
 			case Ret::END_OF_ROW:
 			case Ret::END_OF_CSV:
-				//*des = atoi(buf);	//TODO stoi
+				try {
+					*des = std::stoi(temp, &idx, base);
+				}
+				catch (std::invalid_argument &e) {
+					if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::StringConversionError) << "\tstring : " << temp << "\tidx : " << idx << std::endl;
+					if (errOutputStream != nullptr) *errOutputStream << e.what() << std::endl;
+					*des = 0;
+					ret == Ret::ERR;
+				}
+				catch (std::out_of_range &e) {
+					if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::StringConversionError) << "\tstring : " << temp << "\tidx : " << idx << std::endl;
+					if (errOutputStream != nullptr) *errOutputStream << e.what() << std::endl;
+					*des = 0;
+					ret == Ret::ERR;
+				}
 				return ret;
 				break;
 			case Ret::ERR:
