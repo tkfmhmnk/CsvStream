@@ -545,9 +545,9 @@ namespace CsvStreamNS {
 			case Ret::END_OF_ROW:
 			case Ret::END_OF_CSV:
 				try {
-					DeleteLastSpace(temp);						//‹ó”’‚ğœ‹
-					*des = stoNumeric<NumericT>(temp, &idx, base);			//”’l‚Ö•ÏŠ·
-					if (temp.length() != idx) {					//•¶š—ñ‚ÌÅŒã‚Ü‚Å•ÏŠ·‚³‚ê‚È‚©‚Á‚½ê‡
+					DeleteLastSpace(temp);								//‹ó”’‚ğœ‹
+					*des = stoNumeric<NumericT>(temp, &idx, base);		//”’l‚Ö•ÏŠ·
+					if (temp.length() != idx) {							//•¶š—ñ‚ÌÅŒã‚Ü‚Å•ÏŠ·‚³‚ê‚È‚©‚Á‚½ê‡
 						if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::StringConversionError) << "\tstring : " << temp << "\tidx : " << idx << std::endl;
 						*des = 0;
 						ret = Ret::ERR;
