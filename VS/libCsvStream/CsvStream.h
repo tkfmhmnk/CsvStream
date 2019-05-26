@@ -320,7 +320,7 @@ namespace CsvStreamNS {
 				des.resize(num);	//あらかじめリサイズしておく
 				i = 0;
 				do {
-					ret = readCell(des[i++]);							//現在の入力位置の
+					ret = readCell(des[i++]);							//現在の入力位置の文字列を読み込む
 					if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
 						return ret;
 					}
@@ -331,7 +331,7 @@ namespace CsvStreamNS {
 				i = 0;
 				do {
 					if (i >= des.size()) des.push_back(std::basic_string<CharT>());
-					ret = readCell(des[i++]);							//現在の入力位置の
+					ret = readCell(des[i++]);							//現在の入力位置の文字列を読み込む
 					if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
 						return ret;
 					}
@@ -358,7 +358,7 @@ namespace CsvStreamNS {
 
 			i = 0;
 			do {
-				ret = readCell(des[i++]);							//現在の入力位置の
+				ret = readCell(des[i++]);							//現在の入力位置の文字列を読み込む
 				if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
 					return ret;
 				}
@@ -386,7 +386,7 @@ namespace CsvStreamNS {
 
 			i = 0;
 			do {
-				ret = readCell(des+(i++)*n,n);							//現在の入力位置の
+				ret = readCell(des+(i++)*n,n);						//現在の入力位置の文字列を読み込む
 				if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
 					return ret;
 				}
