@@ -347,7 +347,7 @@ namespace CsvStreamNS {
 		/**
 		ファイルの現在の入力位置のセルの文字列を読み取る
 		*/
-		Ret readCell(CharT* des, std::streamsize n) {
+		Ret readCell_c_str(CharT* des, std::streamsize n) {
 			CharT temp;
 			if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
 			while ((n--) > 1) {
@@ -478,7 +478,7 @@ namespace CsvStreamNS {
 			@param n 読み取る文字列の文字数の最大数
 			@return 正常はEND_OF_ROWかEND_OF_CSVかOKが返る。異常時はERRが返る
 		*/
-		Ret readCells(CharT* des, const int num,const std::streamsize n) {
+		Ret readCells_c_str(CharT* des, const int num,const std::streamsize n) {
 			Ret ret;
 			int i;
 
@@ -489,7 +489,7 @@ namespace CsvStreamNS {
 
 			i = 0;
 			do {
-				ret = readCell(des+(i++)*n,n);						//現在の入力位置の文字列を読み込む
+				ret = readCell_c_str(des+(i++)*n,n);						//現在の入力位置の文字列を読み込む
 				if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
 					return ret;
 				}
@@ -502,7 +502,7 @@ namespace CsvStreamNS {
 		/**
 		ファイルの現在の入力位置のセルの数値をNumericT型で読み取る
 		*/
-		template<class NumericT> Ret readCell(NumericT* des,int base = 10) {
+		template<class NumericT> Ret readCell(NumericT& des,int base = 10) {
 			if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
 			Ret ret;
 			std::basic_string<CharT> temp;
@@ -514,35 +514,99 @@ namespace CsvStreamNS {
 			case Ret::END_OF_CSV:
 				try {
 					DeleteLastSpace(temp);								//空白を除去
-					*des = stoNumeric<NumericT>(temp, &idx, base);		//数値へ変換
+					des = stoNumeric<NumericT>(temp, &idx, base);		//数値へ変換
 					if (temp.length() != idx) {							//文字列の最後まで変換されなかった場合
 						if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::StringConversionError) << "\tstring : " << temp << "\tidx : " << idx << std::endl;
-						*des = 0;
+						des = 0;
 						ret = Ret::ERR;
 					}
 				}
 				catch (std::invalid_argument &e) {
 					if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::StringConversionError) << "\tstring : " << temp << "\tidx : " << idx << std::endl;
 					if (errOutputStream != nullptr) *errOutputStream << e.what() << std::endl;
-					*des = 0;
+					des = 0;
 					ret = Ret::ERR;
 				}
 				catch (std::out_of_range &e) {
 					if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::StringConversionError) << "\tstring : " << temp << "\tidx : " << idx << std::endl;
 					if (errOutputStream != nullptr) *errOutputStream << e.what() << std::endl;
-					*des = 0;
+					des = 0;
 					ret = Ret::ERR;
 				}
 				return ret;
 				break;
 			case Ret::ERR:
 			default:
-				*des = 0;
+				des = 0;
 				ret = Ret::ERR;
 				return ret;
 				break;
 			}
 		};
+
+		/**
+			ファイルの現在の入力位置から複数のセルの数値をNumericT型で読み取る
+			@param des 読み取った数値の代入先のvector。
+			@param num 読み取る数値の最大数。0の場合行の終わりかファイルの終わりに達するまで読み取る。
+			@param base 整数の数値変換における数値の基数
+			@return 正常はEND_OF_ROWかEND_OF_CSVが返るが、読み取った数値の数が指定したnumに達した場合はOKが返る。異常時はERRが返る
+		*/
+		template<class NumericT> Ret readCells(std::vector<NumericT>& des , const typename std::vector<NumericT>::size_type num = 0,const int base = 10) {
+			Ret ret;
+			typename std::vector<NumericT>::size_type i;
+
+			if (num > 0) {			//読み取る文字列の数が指定されている場合、
+				des.resize(num);	//あらかじめリサイズしておく
+				i = 0;
+				do {
+					ret = readCell(des[i++],base);						//現在の入力位置の文字列を読み込む
+					if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
+						return ret;
+					}
+				} while ((i<num)&&(ret != CsvStreamNS::Ret::END_OF_ROW) && (ret != CsvStreamNS::Ret::END_OF_CSV));	//行の終わりかファイルの終わりか、指定の数になるまで読み込む
+				des.resize(i);		//リサイズして余分な要素を削除する
+			}
+			else {
+				i = 0;
+				do {
+					if (i >= des.size()) des.push_back(NumericT());
+					ret = readCell(des[i++],base);						//現在の入力位置の文字列を読み込む
+					if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
+						return ret;
+					}
+				} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (ret != CsvStreamNS::Ret::END_OF_CSV));	//行の終わりかファイルの終わりまで読み込む
+				des.resize(i);		//リサイズして余分な要素を削除する
+			}
+			return ret;
+		}
+
+		/**
+			ファイルの現在の入力位置から複数のセルの数値を読み取る
+			@param des 読み取った数値の代入先の配列のポインタ。
+			@param num 読み取る数値の最大数。
+			@param base 整数の数値変換における数値の基数
+			@return 正常はEND_OF_ROWかEND_OF_CSVかOKが返る。異常時はERRが返る
+		*/
+		template<class NumericT> Ret readCells(NumericT* des, const int num,const int base = 10) {
+			Ret ret;
+			int i;
+
+			if ((num <= 0) || (des == nullptr)) {
+				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::InvalidArgument) << "\tnum : " << num << "\tdes ; " << (int)des << std::endl;
+				return Ret::ERR;
+			}
+
+			i = 0;
+			do {
+				ret = readCell(des[i++],base);						//現在の入力位置の文字列を読み込む
+				if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
+					return ret;
+				}
+			} while ((i < num) && (ret != CsvStreamNS::Ret::END_OF_ROW) && (ret != CsvStreamNS::Ret::END_OF_CSV));	//行の終わりかファイルの終わりか、指定の数になるまで読み込む
+			for (; i < num; i++) des[i]=0;							//余分な要素はクリアしておく
+
+			return ret;
+		}
 
 		/**
 		行中の次のセルの先頭の文字までファイルの入力位置をシークする
