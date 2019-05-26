@@ -763,6 +763,62 @@ template<class T> bool test19() {
 
 }
 
+bool test20() {
+	CsvStreamNS::basic_CsvStream<char> csv1("test20.csv", std::ios_base::out, true, &std::cout);
+	if (!csv1.is_open()) {
+		return false;
+	}
+	std::vector<int> data;
+	data.push_back(9);
+	data.push_back(10);
+	data.push_back(11);
+	//csv1.writeCells(data);
+	csv1 << data;
+	csv1 << "teststr\n";
+	csv1 << std::hex << data;
+	csv1 << ',' << true;
+	csv1 << ',' << 0.1f;
+	csv1 << ',' << 0.1;
+	csv1 << ',' << 0.1l;
+	csv1 << ',' << 1l;
+	csv1 << ',' << 1ll;
+	csv1 << ',' << 1ul;
+	csv1 << ',' << 1ull;
+	csv1 << ',' << 1;
+	csv1 << ',' << 1u;
+	csv1 << L"wide";
+	csv1.close();
+	return false;
+}
+
+bool test21() {
+	CsvStreamNS::basic_CsvStream<wchar_t> csv1(L"test20.csv", std::ios_base::out, true, &std::wcout);
+	if (!csv1.is_open()) {
+		return false;
+	}
+	std::vector<int> data;
+	data.push_back(9);
+	data.push_back(10);
+	data.push_back(11);
+	//csv1.writeCells(data);
+	csv1 << data;
+	csv1 << "teststr\n";
+	csv1 << std::hex << data;
+	csv1 << ',' << true;
+	csv1 << ',' << 0.1f;
+	csv1 << ',' << 0.1;
+	csv1 << ',' << 0.1l;
+	csv1 << ',' << 1l;
+	csv1 << ',' << 1ll;
+	csv1 << ',' << 1ul;
+	csv1 << ',' << 1ull;
+	csv1 << ',' << 1;
+	csv1 << ',' << 1u;
+	csv1 << L"wide";
+	csv1.close();
+	return false;
+}
+
 
 int main() {
 	fstream test("A.csv");
@@ -842,5 +898,8 @@ int main() {
 	EXECUTE_TEST(test19<float>());
 	EXECUTE_TEST(test19<double>());
 	EXECUTE_TEST(test19<long double>());
+
+	EXECUTE_TEST(test20());
+	EXECUTE_TEST(test21());
 	return 0;
 }
