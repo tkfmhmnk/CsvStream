@@ -20,7 +20,7 @@
 #include<string>
 #include<limits>
 #include<stdexcept>
-
+#include<locale>
 
 /**
 	所望の型で特定の文字を取得できる関数の定義を展開する
@@ -47,6 +47,64 @@
 #define _CSVSTREAM_MULTITYPE_STR(arg) {arg , L##arg , u##arg , U##arg} 
 
 namespace CsvStreamNS {
+
+	/**
+		文字列の先頭のスペース(std::isspaceで空白とみなされる文字)を削除する
+		@param str スペースを削除する文字列への参照
+		@return strへの参照
+	*/
+	template<class CharT> std::basic_string<CharT>& DeleteFirstSpace(std::basic_string<CharT> &str) {
+		if (str.empty()) {											//空の文字列の場合、終了
+			return str;
+		}
+		typename std::basic_string<CharT>::const_iterator strIt;
+		std::locale loc = std::locale();
+
+		strIt = str.cbegin();
+		if (std::isspace<CharT>(*strIt,loc) == false){				//最初の文字がスペースがチェック					
+			return str;												//最初の文字がスペースでないなら、終了
+		}
+		++strIt;
+
+		for (; (strIt != str.cend()) && (std::isspace<CharT>(*strIt, loc)); ++strIt) {	}	//文字列の最後になるか、空白でなくなるまでループ
+
+		str.erase(str.cbegin(), strIt);							//最初の文字から空白でない文字の一つまえまでを削除
+		return str;
+	}
+	
+	/**
+		文字列の末尾のスペース(std::isspaceで空白とみなされる文字)を削除する
+		@param str スペースを削除する文字列への参照
+		@return strへの参照
+	*/
+	template<class CharT> std::basic_string<CharT>& DeleteLastSpace(std::basic_string<CharT> &str) {
+		if (str.empty()) {											//空の文字列の場合、終了
+			return str;
+		}
+
+		std::locale loc = std::locale();
+		typename std::basic_string<CharT>::size_type i;
+		typename std::basic_string<CharT>::size_type size = str.length();
+		i = 0;
+		if (std::isspace<CharT>(str[size - i - 1], loc) == false) {
+			return str;
+		}
+		i++;
+
+		for (; (i<size) && (std::isspace<CharT>(str[size-i-1], loc)); i++) {}	//文字列の最後になるか、空白でなくなるまでループ
+
+		str.erase(size - i);										//空白でない文字より後の文字を削除
+		return str;
+	}
+	/**
+		文字列の先頭と末尾のスペース(std::isspaceで空白とみなされる文字)を削除する
+		@param str スペースを削除する文字列への参照
+		@return strへの参照
+	*/
+	template<class CharT> std::basic_string<CharT>& DeleteSpace(std::basic_string<CharT> &str) {
+		return DeleteLastSpace<CharT>(DeleteFirstSpace<CharT>(str));
+	}
+
 	enum class Ret : int {
 		OK = 1,				//!<処理に成功した。
 		END_OF_ROW,			//!<処理に成功し、その結果、行の最後に達した
@@ -247,7 +305,6 @@ namespace CsvStreamNS {
 
 		/**
 		ファイルの現在の入力位置のセルの整数を読み取る
-		@todo 文字列に空白が含まれる場合を考慮する
 		*/
 		Ret readCell(int* des,int base = 10) {
 			if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
@@ -260,11 +317,12 @@ namespace CsvStreamNS {
 			case Ret::END_OF_ROW:
 			case Ret::END_OF_CSV:
 				try {
-					*des = std::stoi(temp, &idx, base);
-					if (temp.length() != idx) {
+					DeleteLastSpace(temp);						//空白を除去
+					*des = std::stoi(temp, &idx, base);			//数値へ変換
+					if (temp.length() != idx) {					//文字列の最後まで変換されなかった場合
 						if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::StringConversionError) << "\tstring : " << temp << "\tidx : " << idx << std::endl;
 						*des = 0;
-						ret == Ret::ERR;
+						ret = Ret::ERR;
 					}
 				}
 				catch (std::invalid_argument &e) {
