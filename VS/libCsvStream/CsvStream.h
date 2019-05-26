@@ -137,6 +137,7 @@ namespace CsvStreamNS {
 			MemoryAllocationError,		//!<メモリ確保などのエラー
 			BufferSizeError,			//!<バッファのサイズが足りない
 			StringConversionError,		//!<文字列の変換に失敗
+			InvalidArgument,			//!<不正な引数
 			Num							//!<メッセージの数を取得するための列挙定数
 		};
 
@@ -158,6 +159,7 @@ namespace CsvStreamNS {
 			_CSVSTREAM_MULTITYPE_STR("Failed to allocate memory."),
 			_CSVSTREAM_MULTITYPE_STR("The buffer is too small."),
 			_CSVSTREAM_MULTITYPE_STR("Failed to convert string."),
+			_CSVSTREAM_MULTITYPE_STR("Invalid argument.")
 		};
 
 		/**
@@ -307,7 +309,8 @@ namespace CsvStreamNS {
 		/**
 			ファイルの現在の入力位置から複数のセルの文字列を読み取る
 			@param des 読み取った文字列の代入先のvector。
-			@param num 読み取る文字列の最大数。0の場合行の終わりまで読み取る。
+			@param num 読み取る文字列の最大数。0の場合行の終わりかファイルの終わりに達するまで読み取る。
+			@return 正常はEND_OF_ROWかEND_OF_CSVが返るが、読み取った文字列の数が指定したnumに達した場合はOKが返る。異常時はERRが返る
 		*/
 		Ret readCells(std::vector<std::basic_string<CharT>>& des , const typename std::vector<std::basic_string<CharT>>::size_type num = 0) {
 			Ret ret;
@@ -321,7 +324,7 @@ namespace CsvStreamNS {
 					if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
 						return ret;
 					}
-				} while ((i<num)&&(ret != CsvStreamNS::Ret::END_OF_ROW) && (ret != CsvStreamNS::Ret::END_OF_CSV));	//行の終わりかファイルの終わりまで読み込む
+				} while ((i<num)&&(ret != CsvStreamNS::Ret::END_OF_ROW) && (ret != CsvStreamNS::Ret::END_OF_CSV));	//行の終わりかファイルの終わりか、指定の数になるまで読み込む
 				des.resize(i);		//リサイズして余分な要素を削除する
 			}
 			else {
@@ -335,6 +338,33 @@ namespace CsvStreamNS {
 				} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (ret != CsvStreamNS::Ret::END_OF_CSV));	//行の終わりかファイルの終わりまで読み込む
 				des.resize(i);		//リサイズして余分な要素を削除する
 			}
+			return ret;
+		}
+
+		/**
+			ファイルの現在の入力位置から複数のセルの文字列を読み取る
+			@param des 読み取った文字列の代入先の配列のポインタ。
+			@param num 読み取る文字列の最大数。
+			@return 正常はEND_OF_ROWかEND_OF_CSVかOKが返る。異常時はERRが返る
+		*/
+		Ret readCells(std::basic_string<CharT>* des, const int num) {
+			Ret ret;
+			int i;
+
+			if (num <= 0) {
+				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::InvalidArgument) << "\tnum : " << num << std::endl;
+				return Ret::ERR;
+			}
+
+			i = 0;
+			do {
+				ret = readCell(des[i++]);							//現在の入力位置の
+				if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
+					return ret;
+				}
+			} while ((i < num) && (ret != CsvStreamNS::Ret::END_OF_ROW) && (ret != CsvStreamNS::Ret::END_OF_CSV));	//行の終わりかファイルの終わりか、指定の数になるまで読み込む
+			for (; i < num; i++) des[i].clear();					//余分な要素はクリアしておく
+
 			return ret;
 		}
 
