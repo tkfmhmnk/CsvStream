@@ -471,7 +471,7 @@ namespace CsvStreamNS {
 		/**
 		ファイルの現在の入力位置のセルの整数を読み取る
 		*/
-		Ret readCell(int* des,int base = 10) {
+		template<class NumericT> Ret readCell(NumericT* des,int base = 10) {
 			if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
 			Ret ret;
 			std::basic_string<CharT> temp;
@@ -483,7 +483,7 @@ namespace CsvStreamNS {
 			case Ret::END_OF_CSV:
 				try {
 					DeleteLastSpace(temp);						//空白を除去
-					*des = std::stoi(temp, &idx, base);			//数値へ変換
+					*des = stoNumeric<NumericT>(temp, &idx, base);			//数値へ変換
 					if (temp.length() != idx) {					//文字列の最後まで変換されなかった場合
 						if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::StringConversionError) << "\tstring : " << temp << "\tidx : " << idx << std::endl;
 						*des = 0;
