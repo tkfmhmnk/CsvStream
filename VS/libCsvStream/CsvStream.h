@@ -369,6 +369,34 @@ namespace CsvStreamNS {
 		}
 
 		/**
+			ファイルの現在の入力位置から複数のセルの文字列を読み取る
+			@param des 読み取った文字列の代入先の配列のポインタ。
+			@param num 読み取る文字列の最大数。
+			@param n 読み取る文字列の文字数の最大数
+			@return 正常はEND_OF_ROWかEND_OF_CSVかOKが返る。異常時はERRが返る
+		*/
+		Ret readCells(CharT* des, const int num,const std::streamsize n) {
+			Ret ret;
+			int i;
+
+			if ((num <= 0)||(n<=0)) {
+				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::InvalidArgument) << "\tnum : " << num <<"\tn : " << n << std::endl;
+				return Ret::ERR;
+			}
+
+			i = 0;
+			do {
+				ret = readCell(des+(i++)*n,n);							//現在の入力位置の
+				if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
+					return ret;
+				}
+			} while ((i < num) && (ret != CsvStreamNS::Ret::END_OF_ROW) && (ret != CsvStreamNS::Ret::END_OF_CSV));	//行の終わりかファイルの終わりか、指定の数になるまで読み込む
+			for (; i < num; i++) *(des+(i)*n) = nullChar;			//余分な要素は初期化しておく
+
+			return ret;
+		}
+
+		/**
 		ファイルの現在の入力位置のセルの整数を読み取る
 		*/
 		Ret readCell(int* des,int base = 10) {
