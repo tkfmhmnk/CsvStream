@@ -24,19 +24,19 @@ bool test1() {
 	
 	i = 0;
 	do {
-		ret = csv1.readCell(data[i], sizeof(data[i]) / sizeof(char));
+		ret = csv1.readCell_c_str(data[i], sizeof(data[i]) / sizeof(char));
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW)&&(csv1.eof()==false));
 
 	i = 0;
 	do {
-		ret = csv1.readCell(data[i], sizeof(data[i]) / sizeof(char));
+		ret = csv1.readCell_c_str(data[i], sizeof(data[i]) / sizeof(char));
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
 	i = 0;
 	do {
-		ret = csv1.readCell(data[i], sizeof(data[i]) / sizeof(char));
+		ret = csv1.readCell_c_str(data[i], sizeof(data[i]) / sizeof(char));
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
@@ -62,7 +62,7 @@ bool test2() {
 
 	i = 0;
 	do {
-		ret = csv1.readCell(data[i], sizeof(data[i]) / sizeof(char));
+		ret = csv1.readCell_c_str(data[i], sizeof(data[i]) / sizeof(char));
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
@@ -92,7 +92,7 @@ bool test3() {
 
 	i = 0;
 	do {
-		ret = csv1.readCell(data[i], sizeof(data[i]) / sizeof(char));
+		ret = csv1.readCell_c_str(data[i], sizeof(data[i]) / sizeof(char));
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
@@ -115,7 +115,7 @@ bool test4() {
 
 	i = 0;
 	do {
-		ret = csv1.readCell(data[i], sizeof(data[i]) / sizeof(char));
+		ret = csv1.readCell_c_str(data[i], sizeof(data[i]) / sizeof(char));
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
@@ -123,7 +123,7 @@ bool test4() {
 
 	i = 0;
 	do {
-		ret = csv1.readCell(data[i], sizeof(data[i]) / sizeof(char));
+		ret = csv1.readCell_c_str(data[i], sizeof(data[i]) / sizeof(char));
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
@@ -144,12 +144,12 @@ bool test5() {
 	ret = CsvStreamNS::Ret::OK;
 
 	i = 0;
-	ret = csv1.readCell(data[i], sizeof(data[i]) / sizeof(char));
+	ret = csv1.readCell_c_str(data[i], sizeof(data[i]) / sizeof(char));
 
 
 	csv1.seekToPrevCell();
 	i = 1;
-	ret = csv1.readCell(data[i], sizeof(data[i]) / sizeof(char));
+	ret = csv1.readCell_c_str(data[i], sizeof(data[i]) / sizeof(char));
 
 	csv1.close();
 	return false;
@@ -279,19 +279,19 @@ bool test9() {
 
 	i = 0;
 	do {
-		ret = csv1.readCell(&data[i]);
+		ret = csv1.readCell(data[i]);
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
 
 	do {
-		ret = csv1.readCell(&data[i]);
+		ret = csv1.readCell(data[i]);
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
 
 	do {
-		ret = csv1.readCell(&data[i]);
+		ret = csv1.readCell(data[i]);
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
@@ -387,19 +387,19 @@ bool test10() {
 
 	i = 0;
 	do {
-		ret = csv1.readCell(&data[i]);
+		ret = csv1.readCell(data[i]);
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
 
 	do {
-		ret = csv1.readCell(&data[i]);
+		ret = csv1.readCell(data[i]);
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
 
 	do {
-		ret = csv1.readCell(&data[i]);
+		ret = csv1.readCell(data[i]);
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
@@ -508,9 +508,9 @@ bool test13() {
 	char data3[5][100];
 
 
-	ret1 = csv1.readCells(&data1[0][0],5,100);
-	ret2 = csv1.readCells(&data2[0][0],5,100);
-	ret3 = csv1.readCells(&data3[0][0],5,100);
+	ret1 = csv1.readCells_c_str(&data1[0][0],5,100);
+	ret2 = csv1.readCells_c_str(&data2[0][0],5,100);
+	ret3 = csv1.readCells_c_str(&data3[0][0],5,100);
 
 	if(ret1 == CsvStreamNS::Ret::END_OF_ROW)
 	if (ret2 == CsvStreamNS::Ret::END_OF_ROW)
@@ -539,19 +539,19 @@ template<class T> bool test14() {
 
 	i = 0;
 	do {
-		ret = csv1.readCell(&data[i]);
+		ret = csv1.readCell(data[i]);
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
 
 	do {
-		ret = csv1.readCell(&data[i]);
+		ret = csv1.readCell(data[i]);
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
 
 	do {
-		ret = csv1.readCell(&data[i]);
+		ret = csv1.readCell(data[i]);
 		i++;
 	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
 
@@ -562,6 +562,78 @@ template<class T> bool test14() {
 	if (data[4] == 5)
 	if (data[5] == 6)
 	if (data[6] == 0)
+	{
+		csv1.close(); 
+		return true;
+	}
+
+	csv1.close();
+	return false;
+
+}
+
+template<class T> bool test15() {
+	CsvStreamNS::basic_CsvStream<char> csv1(testdatas[1], std::ios_base::in | std::ios_base::out, true, &std::cout);
+	CsvStreamNS::Ret ret1,ret2,ret3;
+
+	if (!csv1.is_open()) {
+		return false;
+	}
+
+	std::vector<T> data1;
+	std::vector<T> data2;
+	std::vector<T> data3;
+
+	ret1 = csv1.readCells(data1);
+	ret2 = csv1.readCells(data2);
+	ret3 = csv1.readCells(data3);
+
+	if(ret1 == CsvStreamNS::Ret::END_OF_ROW)
+	if (ret2 == CsvStreamNS::Ret::END_OF_ROW)
+	if (ret3 == CsvStreamNS::Ret::ERR)
+	if(data1[0] == 1234567)
+	if(data1[1] == 2)
+	if(data1[2] == 3123)
+	if(data2[0] == 4)
+	if (data2[1] == 5)
+	if (data2[2] == 6)
+	if (data3[0] == 0)
+	{
+		csv1.close(); 
+		return true;
+	}
+
+	csv1.close();
+	return false;
+
+}
+
+template<class T> bool test16() {
+	CsvStreamNS::basic_CsvStream<char> csv1(testdatas[1], std::ios_base::in | std::ios_base::out, true, &std::cout);
+	CsvStreamNS::Ret ret1,ret2,ret3;
+
+	if (!csv1.is_open()) {
+		return false;
+	}
+
+	T data1[10];
+	T data2[10];
+	T data3[10];
+
+	ret1 = csv1.readCells(data1,10);
+	ret2 = csv1.readCells(data2,10);
+	ret3 = csv1.readCells(data3,10);
+
+	if(ret1 == CsvStreamNS::Ret::END_OF_ROW)
+	if (ret2 == CsvStreamNS::Ret::END_OF_ROW)
+	if (ret3 == CsvStreamNS::Ret::ERR)
+	if(data1[0] == 1234567)
+	if(data1[1] == 2)
+	if(data1[2] == 3123)
+	if(data2[0] == 4)
+	if (data2[1] == 5)
+	if (data2[2] == 6)
+	if (data3[0] == 0)
 	{
 		csv1.close(); 
 		return true;
@@ -607,5 +679,22 @@ int main() {
 	EXECUTE_TEST(test14<double>());
 	EXECUTE_TEST(test14<long double>());
 
+	EXECUTE_TEST(test15<int>());
+	EXECUTE_TEST(test15<long>());
+	EXECUTE_TEST(test15<long long>());
+	EXECUTE_TEST(test15<unsigned long>());
+	EXECUTE_TEST(test15<unsigned long long>());
+	EXECUTE_TEST(test15<float>());
+	EXECUTE_TEST(test15<double>());
+	EXECUTE_TEST(test15<long double>());
+
+	EXECUTE_TEST(test16<int>());
+	EXECUTE_TEST(test16<long>());
+	EXECUTE_TEST(test16<long long>());
+	EXECUTE_TEST(test16<unsigned long>());
+	EXECUTE_TEST(test16<unsigned long long>());
+	EXECUTE_TEST(test16<float>());
+	EXECUTE_TEST(test16<double>());
+	EXECUTE_TEST(test16<long double>());
 	return 0;
 }
