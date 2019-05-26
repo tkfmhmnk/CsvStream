@@ -132,114 +132,82 @@ namespace CsvStreamNS {
 	/**
 		intŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> int stoNumeric<int>(const std::basic_string<char> &str, std::size_t* idx, int base) {
-		return std::stoi(str, idx, base);
-	}
+	template<> int stoNumeric<int>(const std::basic_string<char> &str, std::size_t* idx, int base);
 
 	/**
 		longŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> long stoNumeric<long>(const std::basic_string<char> &str, std::size_t* idx, int base) {
-		return std::stol(str, idx, base);
-	}
+	template<> long stoNumeric<long>(const std::basic_string<char> &str, std::size_t* idx, int base);
 
 	/**
 		long longŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> long long stoNumeric<long long>(const std::basic_string<char> &str, std::size_t* idx, int base) {
-		return std::stoll(str, idx, base);
-	}
+	template<> long long stoNumeric<long long>(const std::basic_string<char> &str, std::size_t* idx, int base);
 
 	/**
 		unsigned longŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> unsigned long stoNumeric<unsigned long>(const std::basic_string<char> &str, std::size_t* idx, int base) {
-		return std::stoul(str, idx, base);
-	}
+	template<> unsigned long stoNumeric<unsigned long>(const std::basic_string<char> &str, std::size_t* idx, int base);
 
 	/**
 		unsigned long longŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> unsigned long long stoNumeric<unsigned long long>(const std::basic_string<char> &str, std::size_t* idx, int base) {
-		return std::stoull(str, idx, base);
-	}
+	template<> unsigned long long stoNumeric<unsigned long long>(const std::basic_string<char> &str, std::size_t* idx, int base);
 
 	/**
 		floatŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> float stoNumeric<float>(const std::basic_string<char> &str, std::size_t* idx, int base) {
-		return std::stof(str, idx);
-	}
+	template<> float stoNumeric<float>(const std::basic_string<char> &str, std::size_t* idx, int base);
 
 	/**
 		doubleŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> double stoNumeric<double>(const std::basic_string<char> &str, std::size_t* idx, int base) {
-		return std::stod(str, idx);
-	}
+	template<> double stoNumeric<double>(const std::basic_string<char> &str, std::size_t* idx, int base);
 
 	/**
 		long doubleŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> long double stoNumeric<long double>(const std::basic_string<char> &str, std::size_t* idx, int base) {
-		return std::stold(str, idx);
-	}
+	template<> long double stoNumeric<long double>(const std::basic_string<char> &str, std::size_t* idx, int base);
 
 	/**
 		intŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> int stoNumeric<int>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
-		return std::stoi(str, idx, base);
-	}
+	template<> int stoNumeric<int>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base);
 
 	/**
 		longŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> long stoNumeric<long>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
-		return std::stol(str, idx, base);
-	}
+	template<> long stoNumeric<long>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base);
 
 	/**
 		long longŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> long long stoNumeric<long long>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
-		return std::stoll(str, idx, base);
-	}
+	template<> long long stoNumeric<long long>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base);
 
 	/**
 		unsigned longŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> unsigned long stoNumeric<unsigned long>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
-		return std::stoul(str, idx, base);
-	}
+	template<> unsigned long stoNumeric<unsigned long>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base);
 
 	/**
 		unsinged long longŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> unsigned long long stoNumeric<unsigned long long>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
-		return std::stoull(str, idx, base);
-	}
+	template<> unsigned long long stoNumeric<unsigned long long>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base);
 
 	/**
 		floatŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> float stoNumeric<float>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
-		return std::stof(str, idx);
-	}
+	template<> float stoNumeric<float>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base);
 
 	/**
 		doubleŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> double stoNumeric<double>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
-		return std::stod(str, idx);
-	}
+	template<> double stoNumeric<double>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base);
 
 	/**
 		long doubleŒ^‚Å“ÁŽê‰»‚µ‚½stoNumeric
 	*/
-	template<> long double stoNumeric<long double>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
-		return std::stold(str, idx);
-	}
+	template<> long double stoNumeric<long double>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base);
 
 	enum class Ret : int {
 		OK = 1,				//!<ˆ—‚É¬Œ÷‚µ‚½B
