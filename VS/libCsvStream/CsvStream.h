@@ -106,74 +106,136 @@ namespace CsvStreamNS {
 		return DeleteLastSpace<CharT>(DeleteFirstSpace<CharT>(str));
 	}
 
+	/**
+		ƒeƒ“ƒvƒŒ[ƒg‰»‚µ‚½stoŒn‚Ì•¶š—ñ-”’l•ÏŠ·ŠÖ”
+		@param str stringŒ^‚Ì•¶š—ñ
+		@param idx •ÏŠ·‚Ég—p‚³‚ê‚È‚©‚Á‚½—v‘f‚ÌƒCƒ“ƒfƒbƒNƒX‚Ì‘ã“üæ
+		@param base ®”‚Ì”’l•ÏŠ·‚É‚¨‚¯‚é”’l‚ÌŠî”
+		@return •ÏŠ·Œ‹‰Ê‚Ì”’l
+	*/
 	template<class NumericT> NumericT stoNumeric(const std::basic_string<char> &str, std::size_t* idx = nullptr, int base = 10) {
 		return (NumericT)(std::stoi(str, idx, base));
 	}
 
+	/**
+		ƒeƒ“ƒvƒŒ[ƒg‰»‚µ‚½stoŒn‚Ì•¶š—ñ-”’l•ÏŠ·ŠÖ”
+		@param str wstringŒ^‚Ì•¶š—ñ
+		@param idx •ÏŠ·‚Ég—p‚³‚ê‚È‚©‚Á‚½—v‘f‚ÌƒCƒ“ƒfƒbƒNƒX‚Ì‘ã“üæ
+		@param base ®”‚Ì”’l•ÏŠ·‚É‚¨‚¯‚é”’l‚ÌŠî”
+		@return •ÏŠ·Œ‹‰Ê‚Ì”’l
+	*/
 	template<class NumericT> NumericT stoNumeric(const std::basic_string<wchar_t> &str, std::size_t* idx = nullptr, int base = 10) {
 		return (NumericT)(std::stoi(str, idx, base));
 	}
 
+	/**
+		intŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> int stoNumeric<int>(const std::basic_string<char> &str, std::size_t* idx, int base) {
 		return std::stoi(str, idx, base);
 	}
 
+	/**
+		longŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> long stoNumeric<long>(const std::basic_string<char> &str, std::size_t* idx, int base) {
 		return std::stol(str, idx, base);
 	}
 
+	/**
+		long longŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> long long stoNumeric<long long>(const std::basic_string<char> &str, std::size_t* idx, int base) {
 		return std::stoll(str, idx, base);
 	}
 
+	/**
+		unsigned longŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> unsigned long stoNumeric<unsigned long>(const std::basic_string<char> &str, std::size_t* idx, int base) {
 		return std::stoul(str, idx, base);
 	}
 
+	/**
+		unsigned long longŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> unsigned long long stoNumeric<unsigned long long>(const std::basic_string<char> &str, std::size_t* idx, int base) {
 		return std::stoull(str, idx, base);
 	}
 
+	/**
+		floatŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> float stoNumeric<float>(const std::basic_string<char> &str, std::size_t* idx, int base) {
 		return std::stof(str, idx);
 	}
 
+	/**
+		doubleŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> double stoNumeric<double>(const std::basic_string<char> &str, std::size_t* idx, int base) {
 		return std::stod(str, idx);
 	}
 
+	/**
+		long doubleŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> long double stoNumeric<long double>(const std::basic_string<char> &str, std::size_t* idx, int base) {
 		return std::stold(str, idx);
 	}
 
+	/**
+		intŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> int stoNumeric<int>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
 		return std::stoi(str, idx, base);
 	}
 
+	/**
+		longŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> long stoNumeric<long>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
 		return std::stol(str, idx, base);
 	}
 
+	/**
+		long longŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> long long stoNumeric<long long>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
 		return std::stoll(str, idx, base);
 	}
 
+	/**
+		unsigned longŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> unsigned long stoNumeric<unsigned long>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
 		return std::stoul(str, idx, base);
 	}
 
+	/**
+		unsinged long longŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> unsigned long long stoNumeric<unsigned long long>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
 		return std::stoull(str, idx, base);
 	}
 
+	/**
+		floatŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> float stoNumeric<float>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
 		return std::stof(str, idx);
 	}
 
+	/**
+		doubleŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> double stoNumeric<double>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
 		return std::stod(str, idx);
 	}
 
+	/**
+		long doubleŒ^‚Å“Áê‰»‚µ‚½stoNumeric
+	*/
 	template<> long double stoNumeric<long double>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
 		return std::stold(str, idx);
 	}
