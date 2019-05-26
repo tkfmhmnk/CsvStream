@@ -112,6 +112,7 @@ namespace CsvStreamNS {
 		@param idx 変換に使用されなかった要素のインデックスの代入先
 		@param base 整数の数値変換における数値の基数
 		@return 変換結果の数値
+		@todo charやwchar_t以外の文字を扱えるようにしなければらない
 	*/
 	template<class NumericT> NumericT stoNumeric(const std::basic_string<char> &str, std::size_t* idx = nullptr, int base = 10) {
 		return (NumericT)(std::stoi(str, idx, base));
