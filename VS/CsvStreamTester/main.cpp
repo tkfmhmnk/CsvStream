@@ -644,6 +644,125 @@ template<class T> bool test16() {
 
 }
 
+template<class T> bool test17() {
+	CsvStreamNS::basic_CsvStream<wchar_t> csv1(L"..\\..\\TestData\\test2.csv", std::ios_base::in | std::ios_base::out, true, &std::wcout);
+	CsvStreamNS::Ret ret;
+
+	if (!csv1.is_open()) {
+		return false;
+	}
+
+	int i;
+	T data[20];
+	ret = CsvStreamNS::Ret::OK;
+
+	i = 0;
+	do {
+		ret = csv1.readCell(data[i]);
+		i++;
+	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
+
+
+	do {
+		ret = csv1.readCell(data[i]);
+		i++;
+	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
+
+
+	do {
+		ret = csv1.readCell(data[i]);
+		i++;
+	} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (csv1.eof() == false));
+
+	if(data[0] == 1234567)
+	if(data[1] == 2)
+	if(data[2] == 3123)
+	if(data[3] == 4)
+	if (data[4] == 5)
+	if (data[5] == 6)
+	if (data[6] == 0)
+	{
+		csv1.close(); 
+		return true;
+	}
+
+	csv1.close();
+	return false;
+
+}
+
+template<class T> bool test18() {
+	CsvStreamNS::basic_CsvStream<wchar_t> csv1(L"..\\..\\TestData\\test2.csv", std::ios_base::in | std::ios_base::out, true, &std::wcout);
+	CsvStreamNS::Ret ret1,ret2,ret3;
+
+	if (!csv1.is_open()) {
+		return false;
+	}
+
+	std::vector<T> data1;
+	std::vector<T> data2;
+	std::vector<T> data3;
+
+	ret1 = csv1.readCells(data1);
+	ret2 = csv1.readCells(data2);
+	ret3 = csv1.readCells(data3);
+
+	if(ret1 == CsvStreamNS::Ret::END_OF_ROW)
+	if (ret2 == CsvStreamNS::Ret::END_OF_ROW)
+	if (ret3 == CsvStreamNS::Ret::ERR)
+	if(data1[0] == 1234567)
+	if(data1[1] == 2)
+	if(data1[2] == 3123)
+	if(data2[0] == 4)
+	if (data2[1] == 5)
+	if (data2[2] == 6)
+	if (data3[0] == 0)
+	{
+		csv1.close(); 
+		return true;
+	}
+
+	csv1.close();
+	return false;
+
+}
+
+template<class T> bool test19() {
+	CsvStreamNS::basic_CsvStream<wchar_t> csv1(L"..\\..\\TestData\\test2.csv", std::ios_base::in | std::ios_base::out, true, &std::wcout);
+	CsvStreamNS::Ret ret1,ret2,ret3;
+
+	if (!csv1.is_open()) {
+		return false;
+	}
+
+	T data1[10];
+	T data2[10];
+	T data3[10];
+
+	ret1 = csv1.readCells(data1,10);
+	ret2 = csv1.readCells(data2,10);
+	ret3 = csv1.readCells(data3,10);
+
+	if(ret1 == CsvStreamNS::Ret::END_OF_ROW)
+	if (ret2 == CsvStreamNS::Ret::END_OF_ROW)
+	if (ret3 == CsvStreamNS::Ret::ERR)
+	if(data1[0] == 1234567)
+	if(data1[1] == 2)
+	if(data1[2] == 3123)
+	if(data2[0] == 4)
+	if (data2[1] == 5)
+	if (data2[2] == 6)
+	if (data3[0] == 0)
+	{
+		csv1.close(); 
+		return true;
+	}
+
+	csv1.close();
+	return false;
+
+}
+
 
 int main() {
 	fstream test("A.csv");
@@ -696,5 +815,32 @@ int main() {
 	EXECUTE_TEST(test16<float>());
 	EXECUTE_TEST(test16<double>());
 	EXECUTE_TEST(test16<long double>());
+
+	EXECUTE_TEST(test17<int>());
+	EXECUTE_TEST(test17<long>());
+	EXECUTE_TEST(test17<long long>());
+	EXECUTE_TEST(test17<unsigned long>());
+	EXECUTE_TEST(test17<unsigned long long>());
+	EXECUTE_TEST(test17<float>());
+	EXECUTE_TEST(test17<double>());
+	EXECUTE_TEST(test17<long double>());
+
+	EXECUTE_TEST(test18<int>());
+	EXECUTE_TEST(test18<long>());
+	EXECUTE_TEST(test18<long long>());
+	EXECUTE_TEST(test18<unsigned long>());
+	EXECUTE_TEST(test18<unsigned long long>());
+	EXECUTE_TEST(test18<float>());
+	EXECUTE_TEST(test18<double>());
+	EXECUTE_TEST(test18<long double>());
+
+	EXECUTE_TEST(test19<int>());
+	EXECUTE_TEST(test19<long>());
+	EXECUTE_TEST(test19<long long>());
+	EXECUTE_TEST(test19<unsigned long>());
+	EXECUTE_TEST(test19<unsigned long long>());
+	EXECUTE_TEST(test19<float>());
+	EXECUTE_TEST(test19<double>());
+	EXECUTE_TEST(test19<long double>());
 	return 0;
 }
