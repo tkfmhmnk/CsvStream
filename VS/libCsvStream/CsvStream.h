@@ -469,7 +469,7 @@ namespace CsvStreamNS {
 		}
 
 		/**
-		ファイルの現在の入力位置のセルの整数を読み取る
+		ファイルの現在の入力位置のセルの数値をNumericT型で読み取る
 		*/
 		template<class NumericT> Ret readCell(NumericT* des,int base = 10) {
 			if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
