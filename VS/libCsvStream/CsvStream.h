@@ -22,6 +22,7 @@
 #include<stdexcept>
 #include<locale>
 #include<vector>
+#include<iomanip>
 
 /**
 	所望の型で特定の文字を取得できる関数の定義を展開する
@@ -225,7 +226,7 @@ namespace CsvStreamNS {
 
 
 
-	template<class CharT> class basic_CsvStream : public std::basic_fstream<CharT>{
+	template<class CharT, class Traits = std::char_traits<CharT>> class basic_CsvStream : public std::basic_fstream<CharT, Traits>{
 	private:
 		CharT* buf;
 		static constexpr int bufsize = 1024;
@@ -324,19 +325,19 @@ namespace CsvStreamNS {
 			const CharT* filename,
 			std::ios_base::openmode mode = std::ios_base::in | std::ios_base::out ,
 			bool existCR = true,
-			std::basic_ostream<CharT>* errorOutputStream = nullptr) : std::basic_fstream<CharT>(filename, mode)
+			std::basic_ostream<CharT>* errorOutputStream = nullptr) : std::basic_fstream<CharT,Traits>(filename, mode)
 		{
 			buf = new CharT[bufsize];
 			errOutputStream = errorOutputStream;
 			_CR = existCR;
 
-			if (std::basic_fstream<CharT>::is_open() == false) {
+			if (std::basic_fstream<CharT,Traits>::is_open() == false) {
 				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::FileOpenError) << ": filename "<< filename << std::endl;
 			}
 
 			if (buf == NULL) {
 				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::MemoryAllocationError) << std::endl;
-				std::basic_fstream<CharT>::close();
+				std::basic_fstream<CharT,Traits>::close();
 			}
 		};
 
@@ -351,12 +352,12 @@ namespace CsvStreamNS {
 			CharT temp;
 			if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
 			while ((n--) > 1) {
-				std::basic_fstream<CharT>::get(temp);
-				if (std::basic_fstream<CharT>::eof()) {
+				std::basic_fstream<CharT,Traits>::get(temp);
+				if (std::basic_fstream<CharT,Traits>::eof()) {
 					*des = nullChar;
 					return Ret::END_OF_CSV;
 				}
-				else if (std::basic_fstream<CharT>::rdstate() != std::basic_fstream<CharT>::goodbit) {
+				else if (std::basic_fstream<CharT,Traits>::rdstate() != std::basic_fstream<CharT,Traits>::goodbit) {
 					*des = nullChar;
 					return Ret::ERR;
 				}
@@ -388,11 +389,11 @@ namespace CsvStreamNS {
 			des.clear();
 			if (seekToCurrCol() == Ret::ERR) return Ret::ERR;
 			while (1) {
-				std::basic_fstream<CharT>::get(temp);
-				if (std::basic_fstream<CharT>::eof()) {
+				std::basic_fstream<CharT,Traits>::get(temp);
+				if (std::basic_fstream<CharT,Traits>::eof()) {
 					return Ret::END_OF_CSV;
 				}
-				else if (std::basic_fstream<CharT>::rdstate() != std::basic_fstream<CharT>::goodbit) {
+				else if (std::basic_fstream<CharT,Traits>::rdstate() != std::basic_fstream<CharT,Traits>::goodbit) {
 					return Ret::ERR;
 				}
 				else if (temp == comma) {
@@ -615,11 +616,11 @@ namespace CsvStreamNS {
 		Ret seekToNextCell() {
 			CharT temp;
 			while (1) {
-				std::basic_fstream<CharT>::get(temp);
-				if (std::basic_fstream<CharT>::eof()) {
+				std::basic_fstream<CharT,Traits>::get(temp);
+				if (std::basic_fstream<CharT,Traits>::eof()) {
 					return Ret::END_OF_CSV;
 				}
-				else if (std::basic_fstream<CharT>::rdstate() != std::basic_fstream<CharT>::goodbit) {
+				else if (std::basic_fstream<CharT,Traits>::rdstate() != std::basic_fstream<CharT,Traits>::goodbit) {
 					return Ret::ERR;
 				}
 				else if (temp == comma) {
@@ -639,11 +640,11 @@ namespace CsvStreamNS {
 		Ret seekToNextCol() {
 			CharT temp;
 			while (1) {
-				std::basic_fstream<CharT>::ignore(numeric_limits<std::streamsize>::max(), LF);
-				if (std::basic_fstream<CharT>::eof()) {
+				std::basic_fstream<CharT,Traits>::ignore(numeric_limits<std::streamsize>::max(), LF);
+				if (std::basic_fstream<CharT,Traits>::eof()) {
 					return Ret::END_OF_CSV;
 				}
-				else if (std::basic_fstream<CharT>::rdstate() != std::basic_fstream<CharT>::goodbit) {
+				else if (std::basic_fstream<CharT,Traits>::rdstate() != std::basic_fstream<CharT,Traits>::goodbit) {
 					return Ret::ERR;
 				}
 				else {
@@ -660,30 +661,30 @@ namespace CsvStreamNS {
 		Ret seekToPrevCell() {
 			CharT temp;
 			do {
-				if (std::basic_fstream<CharT>::rdstate() != std::basic_fstream<CharT>::goodbit) return Ret::ERR;
+				if (std::basic_fstream<CharT,Traits>::rdstate() != std::basic_fstream<CharT,Traits>::goodbit) return Ret::ERR;
 
-				if (std::basic_fstream<CharT>::tellg() == 0) return Ret::ERR;
-				std::basic_fstream<CharT>::seekg(-1, ios_base::cur);
-				temp = std::basic_fstream<CharT>::peek();
+				if (std::basic_fstream<CharT,Traits>::tellg() == 0) return Ret::ERR;
+				std::basic_fstream<CharT,Traits>::seekg(-1, ios_base::cur);
+				temp = std::basic_fstream<CharT,Traits>::peek();
 				if (temp == LF) {
-					std::basic_fstream<CharT>::get(temp);
+					std::basic_fstream<CharT,Traits>::get(temp);
 					return Ret::ERR;
 				}
 			} while (temp != comma);
 
 			do {
-				if (std::basic_fstream<CharT>::rdstate() != std::basic_fstream<CharT>::goodbit) return Ret::ERR;
+				if (std::basic_fstream<CharT,Traits>::rdstate() != std::basic_fstream<CharT,Traits>::goodbit) return Ret::ERR;
 
-				if (std::basic_fstream<CharT>::tellg() == 0) return Ret::BEGIN_OF_CSV;
-				std::basic_fstream<CharT>::seekg(-1, ios_base::cur);
-				temp = std::basic_fstream<CharT>::peek();
+				if (std::basic_fstream<CharT,Traits>::tellg() == 0) return Ret::BEGIN_OF_CSV;
+				std::basic_fstream<CharT,Traits>::seekg(-1, ios_base::cur);
+				temp = std::basic_fstream<CharT,Traits>::peek();
 				if (temp == LF) {
-					std::basic_fstream<CharT>::get(temp);
+					std::basic_fstream<CharT,Traits>::get(temp);
 					return Ret::BEGIN_OF_ROW;
 				}
 			} while (temp != comma);
 
-			std::basic_fstream<CharT>::get(temp);
+			std::basic_fstream<CharT,Traits>::get(temp);
 			return Ret::OK;
 		};
 
@@ -694,22 +695,22 @@ namespace CsvStreamNS {
 		Ret seekToPrevCol() {
 			CharT temp;
 			do {
-				if (std::basic_fstream<CharT>::rdstate() != std::basic_fstream<CharT>::goodbit) return Ret::ERR;
+				if (std::basic_fstream<CharT,Traits>::rdstate() != std::basic_fstream<CharT,Traits>::goodbit) return Ret::ERR;
 
-				if (std::basic_fstream<CharT>::tellg() == 0) return Ret::ERR;
-				std::basic_fstream<CharT>::seekg(-1, ios_base::cur);
-				temp = std::basic_fstream<CharT>::peek();
+				if (std::basic_fstream<CharT,Traits>::tellg() == 0) return Ret::ERR;
+				std::basic_fstream<CharT,Traits>::seekg(-1, ios_base::cur);
+				temp = std::basic_fstream<CharT,Traits>::peek();
 			} while (temp != LF);
 
 			do {
-				if (std::basic_fstream<CharT>::rdstate() != std::basic_fstream<CharT>::goodbit) return Ret::ERR;
+				if (std::basic_fstream<CharT,Traits>::rdstate() != std::basic_fstream<CharT,Traits>::goodbit) return Ret::ERR;
 
-				if (std::basic_fstream<CharT>::tellg() == 0) return Ret::BEGIN_OF_CSV;
-				std::basic_fstream<CharT>::seekg(-1, ios_base::cur);
-				temp = std::basic_fstream<CharT>::peek();
+				if (std::basic_fstream<CharT,Traits>::tellg() == 0) return Ret::BEGIN_OF_CSV;
+				std::basic_fstream<CharT,Traits>::seekg(-1, ios_base::cur);
+				temp = std::basic_fstream<CharT,Traits>::peek();
 			} while (temp != LF);
 
-			std::basic_fstream<CharT>::get(temp);
+			std::basic_fstream<CharT,Traits>::get(temp);
 			return Ret::OK;
 		};
 
@@ -719,26 +720,165 @@ namespace CsvStreamNS {
 		Ret seekToCurrCol() {
 			CharT temp;
 			do {
-				if (std::basic_fstream<CharT>::rdstate() != std::basic_fstream<CharT>::goodbit) return Ret::ERR;
+				if (std::basic_fstream<CharT,Traits>::rdstate() != std::basic_fstream<CharT,Traits>::goodbit) return Ret::ERR;
 
-				if (std::basic_fstream<CharT>::tellg() == 0) return Ret::BEGIN_OF_CSV;
-				std::basic_fstream<CharT>::seekg(-1, ios_base::cur);
-				temp = std::basic_fstream<CharT>::peek();
+				if (std::basic_fstream<CharT,Traits>::tellg() == 0) return Ret::BEGIN_OF_CSV;
+				std::basic_fstream<CharT,Traits>::seekg(-1, ios_base::cur);
+				temp = std::basic_fstream<CharT,Traits>::peek();
 				if (temp == LF) {
-					std::basic_fstream<CharT>::get(temp);
+					std::basic_fstream<CharT,Traits>::get(temp);
 					return Ret::BEGIN_OF_ROW;
 				}
 			} while (temp != comma);
 
-			std::basic_fstream<CharT>::get(temp);
+			std::basic_fstream<CharT,Traits>::get(temp);
 			return Ret::OK;
 		};
+
+		/**
+			書き込み位置を読み込み位置にする
+			@todo 書き込み位置と読み込み位置の関係について調査する。
+			tellpで取得した通りの位置に書き込みできず、seekpでシークするとtellpの値が同じにも関わらず、tellpで取得した通りの位置に書き込みできるようになる。
+		*/
+		void seekPutPosToGetPos() {
+			std::basic_fstream<CharT,Traits>::seekp(std::basic_fstream<CharT,Traits>::tellg());
+		}
+
+		template<class T> basic_CsvStream<CharT, Traits>& writeCells(const std::vector<T>& src) {
+			typename std::vector<T>::const_iterator srcIt;
+			seekPutPosToGetPos();				//書き込み位置を修正
+			
+			srcIt = src.cbegin();
+			std::basic_ostream<CharT>::operator<<(*srcIt);
+			++srcIt;
+			for (; srcIt != src.cend(); ++srcIt) {
+				std::operator<<(*this, comma);
+				std::basic_fstream<CharT,Traits>::operator<<(*srcIt);
+			}
+			return *this;
+		}
+
+		// マニピュレータの実行
+		basic_CsvStream<CharT, Traits>& operator<<(std::basic_ostream<CharT,Traits>& (*pf)(std::basic_ostream<CharT,Traits>&)) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(pf);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(std::basic_ios<CharT, Traits>& (*pf)(std::basic_ios<CharT, Traits>&)) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(pf);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(std::ios_base& (*pf)(std::ios_base&)) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(pf);
+		};
+
+		// bool値・数値・ポインタの書式化出力
+		basic_CsvStream<CharT, Traits>& operator<<(bool n) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(n);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(short n) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(n);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(unsigned short n) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(n);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(int n) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(n);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(unsigned int n) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(n);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(long n) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(n);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(unsigned long n) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(n);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(long long n) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(n);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(unsigned long long n) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(n);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(float f) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(f);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(double f) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(f);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(long double f) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(f);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(const void* p) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(p);
+		};
+		basic_CsvStream<CharT, Traits>& operator<<(nullptr_t) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(nullptr_t);
+		};
+
+		// ストリームバッファの非書式化出力
+		basic_CsvStream<CharT, Traits>& operator<<(std::basic_streambuf<CharT>* sb) {
+			return (basic_CsvStream<CharT, Traits>&)std::basic_fstream<CharT,Traits>::operator<<(sb);
+		}
+
+		template<class T> basic_CsvStream<CharT, Traits>& operator<<(const std::vector<T>& src) {
+			return writeCells(src);
+		}
 	};
 
 	typedef basic_CsvStream<char> CsvStream;
 	typedef basic_CsvStream<wchar_t> WCsvStream;
+
 }
 
+
+namespace std {
+	// 文字の書式化出力
+	template<class CharT, class Traits>
+	CsvStreamNS::basic_CsvStream<CharT, Traits>& operator<<(CsvStreamNS::basic_CsvStream<CharT, Traits>& os, CharT c) {
+		return (CsvStreamNS::basic_CsvStream<CharT, Traits>&)operator<<((std::basic_fstream<CharT,Traits>&)os, c);
+	};
+	template<class CharT, class Traits>
+	CsvStreamNS::basic_CsvStream<CharT, Traits>& operator<<(CsvStreamNS::basic_CsvStream<CharT, Traits>& os, char c) {
+		return (CsvStreamNS::basic_CsvStream<CharT, Traits>&)operator<<((std::basic_fstream<CharT,Traits>&)os, c);
+	};
+	template<class Traits>
+	CsvStreamNS::basic_CsvStream<char, Traits>& operator<<(CsvStreamNS::basic_CsvStream<char, Traits>& os, char c) {
+		return (CsvStreamNS::basic_CsvStream<char, Traits>&)operator<<((std::basic_fstream<char,Traits>&)os, c);
+	};
+	template<class Traits>
+	CsvStreamNS::basic_CsvStream<char, Traits>& operator<<(CsvStreamNS::basic_CsvStream<char, Traits>& os, unsigned char c) {
+		return (CsvStreamNS::basic_CsvStream<char, Traits>&)operator<<((std::basic_fstream<char,Traits>&)os, c);
+	};
+	template<class Traits>
+	CsvStreamNS::basic_CsvStream<char, Traits>& operator<<(CsvStreamNS::basic_CsvStream<char, Traits>& os, signed char c) {
+		return (CsvStreamNS::basic_CsvStream<char, Traits>&)operator<<((std::basic_fstream<char,Traits>&)os, c);
+	};
+	// 文字列の書式化出力
+	template<class CharT, class Traits>
+	CsvStreamNS::basic_CsvStream<CharT, Traits>& operator<<(CsvStreamNS::basic_CsvStream<CharT, Traits>& os, const CharT* s) {
+		return (CsvStreamNS::basic_CsvStream<CharT, Traits>&)operator<<((std::basic_fstream<CharT,Traits>&)os, s);
+	};
+	template<class CharT, class Traits>
+	CsvStreamNS::basic_CsvStream<CharT, Traits>& operator<<(CsvStreamNS::basic_CsvStream<CharT, Traits>& os, const char* s) {
+		return (CsvStreamNS::basic_CsvStream<CharT, Traits>&)operator<<((std::basic_fstream<CharT,Traits>&)os, s);
+	};
+	template<class Traits>
+	CsvStreamNS::basic_CsvStream<char, Traits>& operator<<(CsvStreamNS::basic_CsvStream<char, Traits>& os, const char* s) {
+		return (CsvStreamNS::basic_CsvStream<char, Traits>&)operator<<((std::basic_fstream<char,Traits>&)os, s);
+	};
+	template<class Traits>
+	CsvStreamNS::basic_CsvStream<char, Traits>& operator<<(CsvStreamNS::basic_CsvStream<char, Traits>& os, const unsigned char* s) {
+		return (CsvStreamNS::basic_CsvStream<char, Traits>&)operator<<((std::basic_fstream<char,Traits>&)os, s);
+	};
+	template<class Traits>
+	CsvStreamNS::basic_CsvStream<char, Traits>& operator<<(CsvStreamNS::basic_CsvStream<char, Traits>& os, const signed char* s) {
+		return (CsvStreamNS::basic_CsvStream<char, Traits>&)operator<<((std::basic_fstream<char,Traits>&)os, s);
+	};
+
+	// 右辺値参照ストリームへの出力 (C++11)
+	template<class CharT, class Traits, class T>
+	CsvStreamNS::basic_CsvStream<CharT, Traits>& operator<<(CsvStreamNS::basic_CsvStream<CharT, Traits>&& os, const T& x) {
+		return (CsvStreamNS::basic_CsvStream<char, Traits>&)operator<<((std::basic_fstream<char,Traits>&)os, x);
+	};
+}
 
 
 #endif /* CSVSTREAM_H */
