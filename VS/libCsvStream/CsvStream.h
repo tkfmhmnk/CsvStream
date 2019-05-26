@@ -21,6 +21,7 @@
 #include<limits>
 #include<stdexcept>
 #include<locale>
+#include<vector>
 
 /**
 	所望の型で特定の文字を取得できる関数の定義を展開する
@@ -302,6 +303,40 @@ namespace CsvStreamNS {
 			}
 			return Ret::ERR;
 		};
+
+		/**
+			ファイルの現在の入力位置から複数のセルの文字列を読み取る
+			@param des 読み取った文字列の代入先のvector。
+			@param num 読み取る文字列の最大数。0の場合行の終わりまで読み取る。
+		*/
+		Ret readCells(std::vector<std::basic_string<CharT>>& des , const typename std::vector<std::basic_string<CharT>>::size_type num = 0) {
+			Ret ret;
+			typename std::vector<std::basic_string<CharT>>::size_type i;
+
+			if (num > 0) {			//読み取る文字列の数が指定されている場合、
+				des.resize(num);	//あらかじめリサイズしておく
+				i = 0;
+				do {
+					ret = readCell(des[i++]);							//現在の入力位置の
+					if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
+						return ret;
+					}
+				} while ((i<num)&&(ret != CsvStreamNS::Ret::END_OF_ROW) && (ret != CsvStreamNS::Ret::END_OF_CSV));	//行の終わりかファイルの終わりまで読み込む
+				des.resize(i);		//リサイズして余分な要素を削除する
+			}
+			else {
+				i = 0;
+				do {
+					if (i >= des.size()) des.push_back(std::basic_string<CharT>());
+					ret = readCell(des[i++]);							//現在の入力位置の
+					if (ret == CsvStreamNS::Ret::ERR) {					//エラーの場合終了する
+						return ret;
+					}
+				} while ((ret != CsvStreamNS::Ret::END_OF_ROW) && (ret != CsvStreamNS::Ret::END_OF_CSV));	//行の終わりかファイルの終わりまで読み込む
+				des.resize(i);		//リサイズして余分な要素を削除する
+			}
+			return ret;
+		}
 
 		/**
 		ファイルの現在の入力位置のセルの整数を読み取る
