@@ -106,6 +106,74 @@ namespace CsvStreamNS {
 		return DeleteLastSpace<CharT>(DeleteFirstSpace<CharT>(str));
 	}
 
+	template<class NumericT, class CharT> NumericT stoNumeric(const std::basic_string<CharT> &str, std::size_t* idx = nullptr, int base = 10) {
+		return (NumericT)(std::stoi(str, idx, base));
+	}
+
+	template<> int stoNumeric<int,char>(const std::basic_string<char> &str, std::size_t* idx, int base) {
+		return std::stoi(str, idx, base);
+	}
+
+	template<> long stoNumeric<long,char>(const std::basic_string<char> &str, std::size_t* idx, int base) {
+		return std::stol(str, idx, base);
+	}
+
+	template<> long long stoNumeric<long long, char>(const std::basic_string<char> &str, std::size_t* idx, int base) {
+		return std::stoll(str, idx, base);
+	}
+
+	template<> unsigned long stoNumeric<unsigned long, char>(const std::basic_string<char> &str, std::size_t* idx, int base) {
+		return std::stoul(str, idx, base);
+	}
+
+	template<> unsigned long long stoNumeric<unsigned long long, char>(const std::basic_string<char> &str, std::size_t* idx, int base) {
+		return std::stoull(str, idx, base);
+	}
+
+	template<> float stoNumeric<float, char>(const std::basic_string<char> &str, std::size_t* idx, int base) {
+		return std::stof(str, idx);
+	}
+
+	template<> double stoNumeric<double, char>(const std::basic_string<char> &str, std::size_t* idx, int base) {
+		return std::stod(str, idx);
+	}
+
+	template<> long double stoNumeric<long double, char>(const std::basic_string<char> &str, std::size_t* idx, int base) {
+		return std::stold(str, idx);
+	}
+
+	template<> int stoNumeric<int, wchar_t>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
+		return std::stoi(str, idx, base);
+	}
+
+	template<> long stoNumeric<long, wchar_t>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
+		return std::stol(str, idx, base);
+	}
+
+	template<> long long stoNumeric<long long, wchar_t>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
+		return std::stoll(str, idx, base);
+	}
+
+	template<> unsigned long stoNumeric<unsigned long, wchar_t>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
+		return std::stoul(str, idx, base);
+	}
+
+	template<> unsigned long long stoNumeric<unsigned long long, wchar_t>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
+		return std::stoull(str, idx, base);
+	}
+
+	template<> float stoNumeric<float, wchar_t>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
+		return std::stof(str, idx);
+	}
+
+	template<> double stoNumeric<double, wchar_t>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
+		return std::stod(str, idx);
+	}
+
+	template<> long double stoNumeric<long double, wchar_t>(const std::basic_string<wchar_t> &str, std::size_t* idx, int base) {
+		return std::stold(str, idx);
+	}
+
 	enum class Ret : int {
 		OK = 1,				//!<処理に成功した。
 		END_OF_ROW,			//!<処理に成功し、その結果、行の最後に達した
@@ -351,8 +419,8 @@ namespace CsvStreamNS {
 			Ret ret;
 			int i;
 
-			if (num <= 0) {
-				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::InvalidArgument) << "\tnum : " << num << std::endl;
+			if ((num <= 0)||(des == nullptr)) {
+				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::InvalidArgument) << "\tnum : " << num << "\tdes ; " << (int)des << std::endl;
 				return Ret::ERR;
 			}
 
@@ -379,8 +447,8 @@ namespace CsvStreamNS {
 			Ret ret;
 			int i;
 
-			if ((num <= 0)||(n<=0)) {
-				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::InvalidArgument) << "\tnum : " << num <<"\tn : " << n << std::endl;
+			if ((num <= 0)||(n<=0)||(des == nullptr)) {
+				if (errOutputStream != nullptr) *errOutputStream << GetMessage<CharT>(Msg::InvalidArgument) << "\tnum : " << num <<"\tn : " << n << "\tdes ; " << (int)des << std::endl;
 				return Ret::ERR;
 			}
 
